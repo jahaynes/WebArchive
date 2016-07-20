@@ -112,7 +112,7 @@ headerBlock = HeaderBlock <$> version <* crlf
         value (MandatoryKey ContentLength) = IntValue <$> int
         value (CustomKey CompressionMode) = CompressionModeValue <$> compressMode
         value (CustomKey UncompressedContentLength) = IntValue <$> int
-        value _ = StringValue <$> takeWhile1 (not . isSpace)
+        value _ = StringValue <$> takeWhile1 (not . (\x -> x == '\r' || x == '\n'))
 
         compressMode :: Parser CompressionMode
         compressMode = choice [ const Compressed <$> string "contentonly"
