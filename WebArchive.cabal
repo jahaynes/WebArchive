@@ -16,7 +16,14 @@ extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Data.WarcParse     
+  exposed-modules:     Data.Warc.Parse
+                       Data.Warc.Header.Value
+                       Data.Warc.Header.HeaderLine
+                       Data.Warc.Header.Key
+                       Data.Warc.Header.Header
+                       Data.Warc.Shared
+                       Data.Warc.WarcEntry
+                       Data.Warc.Body.Body
   -- other-modules:       
   -- other-extensions:    
   build-depends:       attoparsec, base >=4.8 && <4.9, bytestring
