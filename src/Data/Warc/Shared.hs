@@ -8,7 +8,7 @@ import Data.Attoparsec.ByteString.Char8         (takeWhile1)
 import Data.ByteString                          (ByteString)
 
 data CompressionMode = Compressed
-                     | Uncompressed deriving Show
+                     | Uncompressed deriving (Eq, Show)
 
 --Carriage return - Line feed
 crlf :: Parser ()
