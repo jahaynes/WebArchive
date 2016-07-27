@@ -4,14 +4,14 @@ module Data.Warc.Header.Value where
 
 import Data.Attoparsec.ByteString.Char8      (Parser, choice)
 import Data.Char                             (isSpace)
-import Data.ByteString.Char8                 (ByteString, readInt)
+import Data.ByteString.Char8                 (ByteString, readInt, pack)
 
 import Data.Warc.Header.Key
 import Data.Warc.Shared
 
 data Value = IntValue Int
            | CompressionModeValue CompressionMode
-           | StringValue ByteString deriving Show
+           | StringValue ByteString deriving (Eq, Show)
 
 value :: Key -> Parser Value
 value (MandatoryKey ContentLength) = IntValue <$> int
@@ -29,3 +29,9 @@ int = do
 compressMode :: Parser CompressionMode
 compressMode = choice [ Compressed <%> "contentonly"
                       , Uncompressed <%> "none" ]
+
+toByteString :: Value -> ByteString
+toByteString (CompressionModeValue Compressed) = "contentonly"
+toByteString (CompressionModeValue Uncompressed) = "none"
+toByteString (IntValue i) = pack . show $ i
+toByteString (StringValue bs) = bs
