@@ -3,7 +3,7 @@
 module Data.Warc.Header.HeaderLine where
 
 import Data.Attoparsec.ByteString.Char8      (Parser, skipSpace, char)
-import Data.ByteString.Builder               (Builder, toLazyByteString, byteString, intDec, char8)
+import Data.ByteString.Builder               (Builder, toLazyByteString, byteString)
 import Data.ByteString.Char8    as C8
 import Data.ByteString.Lazy                  (toStrict)
 
