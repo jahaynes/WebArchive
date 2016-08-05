@@ -2,11 +2,10 @@
 
 module Data.Warc.Header.Key where
 
-import Data.Attoparsec.ByteString.Char8       (Parser, choice)
-import Data.Char                              (isSpace)
-import Data.ByteString.Builder                (Builder, toLazyByteString, byteString, intDec, char8)
-import Data.ByteString.Char8            as C8 (ByteString)
-import Data.ByteString.Lazy.Char8             (toStrict)
+import Data.Attoparsec.ByteString.Char8       (Parser, choice, isSpace)
+import Data.ByteString.Builder                (Builder, toLazyByteString, byteString)
+import Data.ByteString                        (ByteString)
+import Data.ByteString.Lazy                   (toStrict)
 
 import Data.Warc.Shared
 
@@ -42,9 +41,9 @@ toByteString :: Key -> ByteString
 toByteString = toStrict . toLazyByteString . build
 
 build :: Key -> Builder
-build (MandatoryKey key) = buildMandatory key
-build (OptionalKey key)  = buildOptional key
-build (CustomKey key)    = buildCustom key
+build (MandatoryKey k) = buildMandatory k
+build (OptionalKey k)  = buildOptional k
+build (CustomKey k)    = buildCustom k
 
 buildMandatory :: MandatoryKey -> Builder
 buildMandatory WarcRecordId  = "WARC-Record-ID"

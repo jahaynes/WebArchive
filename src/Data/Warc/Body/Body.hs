@@ -2,7 +2,7 @@ module Data.Warc.Body.Body where
 
 import Data.Attoparsec.ByteString.Lazy as L  (Parser, take)
 import Data.ByteString                       (ByteString)
-import Data.ByteString.Builder               (Builder, toLazyByteString, byteString, intDec, char8)
+import Data.ByteString.Builder               (Builder, toLazyByteString, byteString)
 import Data.ByteString.Lazy                  (toStrict)
 
 import Data.Warc.Shared

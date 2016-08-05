@@ -2,11 +2,10 @@
 
 module Data.Warc.Header.Value where
 
-import Data.Attoparsec.ByteString.Char8      (Parser, choice, char, takeWhile1, isSpace)
+import Data.Attoparsec.ByteString.Char8      (Parser, choice, takeWhile1, isSpace)
 import Data.ByteString.Builder               (Builder, toLazyByteString, byteString, intDec, char8)
-import Data.ByteString.Char8                 (ByteString, readInt, pack)
-import Data.ByteString.Lazy.Char8            (toStrict)
-import Data.Monoid                           (mconcat, (<>))
+import Data.ByteString.Char8                 (ByteString, readInt)
+import Data.ByteString.Lazy                  (toStrict)
 import Data.Warc.Header.Key   hiding (build)
 import Data.Warc.Shared
 
