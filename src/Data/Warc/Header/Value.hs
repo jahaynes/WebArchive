@@ -2,8 +2,7 @@
 
 module Data.Warc.Header.Value where
 
-import Data.Attoparsec.ByteString.Char8      (Parser, choice, char, takeWhile1)
-import Data.Char                             (isSpace)
+import Data.Attoparsec.ByteString.Char8      (Parser, choice, char, takeWhile1, isSpace)
 import Data.ByteString.Char8                 (ByteString, readInt, pack)
 
 import Data.Warc.Header.Key
