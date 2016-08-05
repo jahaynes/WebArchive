@@ -3,9 +3,11 @@
 module Data.Warc.Header.Value where
 
 import Data.Attoparsec.ByteString.Char8      (Parser, choice, char, takeWhile1, isSpace)
+import Data.ByteString.Builder               (Builder, toLazyByteString, byteString, intDec, char8)
 import Data.ByteString.Char8                 (ByteString, readInt, pack)
-
-import Data.Warc.Header.Key
+import Data.ByteString.Lazy.Char8            (toStrict)
+import Data.Monoid                           (mconcat, (<>))
+import Data.Warc.Header.Key   hiding (build)
 import Data.Warc.Shared
 
 data Date = Date
@@ -52,9 +54,18 @@ compressMode = choice [ Compressed <%> "contentonly"
                       , Uncompressed <%> "none" ]
 
 toByteString :: Value -> ByteString
-toByteString (CompressionModeValue Compressed) = "contentonly"
-toByteString (CompressionModeValue Uncompressed) = "none"
-toByteString (DateValue (Date yr mnt day hr mnu sec)) = let [a,b,c,d,e,f] = map show [yr, mnt, day, hr, mnu, sec]
-    in pack $ concat [a,"-",b,"-",c,"T",d,":",e,":",f,"Z"]
-toByteString (IntValue i) = pack . show $ i
-toByteString (StringValue bs) = bs
+toByteString = toStrict . toLazyByteString . build
+
+build :: Value -> Builder
+build (CompressionModeValue Compressed) = byteString "contentonly"
+build (CompressionModeValue Uncompressed) = byteString "none"
+build (IntValue i) = intDec i
+build (StringValue bs) = byteString bs
+build (DateValue (Date yr mo da hr mi sc)) =
+    mconcat [ intDec yr, char8 '-'
+            , intDec mo, char8 '-'
+            , intDec da, char8 'T'
+            , intDec hr, char8 ':'
+            , intDec mi, char8 ':'
+            , intDec sc, char8 'Z' ]
+
