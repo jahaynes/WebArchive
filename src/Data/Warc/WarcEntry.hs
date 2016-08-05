@@ -2,10 +2,12 @@
 
 module Data.Warc.WarcEntry where
 
-import Data.Attoparsec.ByteString.Lazy (Parser)
-import Data.ByteString.Builder         (Builder, toLazyByteString, byteString)
-import Data.ByteString                 (ByteString)
-import Data.ByteString.Lazy            (toStrict)
+import Data.Attoparsec.ByteString.Lazy      (Parser)
+import Data.ByteString.Builder              (Builder, byteString)
+import qualified Data.ByteString.Builder as B (toLazyByteString)
+import Data.ByteString                      (ByteString)
+import Data.ByteString.Lazy                 (toStrict)
+import qualified Data.ByteString.Lazy as Lazy (ByteString)
 
 import Data.Warc.Body.Body hiding (build)
 import qualified Data.Warc.Body.Body as B (build)
@@ -46,7 +48,10 @@ warcEntry = do
         Nothing -> return Uncompressed
 
 toByteString :: WarcEntry -> ByteString
-toByteString = toStrict . toLazyByteString . build
+toByteString = toStrict . toLazyByteString
+
+toLazyByteString :: WarcEntry -> Lazy.ByteString
+toLazyByteString = B.toLazyByteString . build
 
 build :: WarcEntry -> Builder
 build (WarcEntry header body) =
