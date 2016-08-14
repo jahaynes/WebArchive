@@ -2,15 +2,20 @@
 
 module Data.Warc.WarcEntry where
 
-import Data.Attoparsec.ByteString.Lazy (Parser)
+import Data.Attoparsec.ByteString.Lazy      (Parser)
+import Data.ByteString.Builder              (Builder, byteString)
+import qualified Data.ByteString.Builder as B (toLazyByteString)
+import Data.ByteString                      (ByteString)
+import Data.ByteString.Lazy                 (toStrict)
+import qualified Data.ByteString.Lazy as Lazy (ByteString)
 
-import Data.ByteString.Char8    as C8
-
-import Data.Warc.Body.Body  as Body
-import Data.Warc.Header.Header  as Header
+import Data.Warc.Body.Body hiding (build)
+import qualified Data.Warc.Body.Body as B (build)
+import Data.Warc.Header.Header hiding (build)
+import qualified Data.Warc.Header.Header as H
 import Data.Warc.Shared
-import Data.Warc.Header.Key
-import Data.Warc.Header.Value
+import Data.Warc.Header.Key hiding (build)
+import Data.Warc.Header.Value hiding (build)
 
 data WarcEntry = WarcEntry WarcHeader WarcBody deriving (Eq, Show)
 
@@ -43,10 +48,11 @@ warcEntry = do
         Nothing -> return Uncompressed
 
 toByteString :: WarcEntry -> ByteString
-toByteString (WarcEntry header body) =
-    C8.concat [
-        Header.toByteString header,
-        "\r\n",
-        Body.toByteString body,
-        "\r\n",
-        "\r\n"]
+toByteString = toStrict . toLazyByteString
+
+toLazyByteString :: WarcEntry -> Lazy.ByteString
+toLazyByteString = B.toLazyByteString . build
+
+build :: WarcEntry -> Builder
+build (WarcEntry header body) =
+    mconcat [H.build header, byteString "\r\n", B.build body, byteString "\r\n\r\n"]

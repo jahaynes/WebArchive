@@ -3,12 +3,15 @@
 module Data.Warc.Header.Header where
 
 import Data.Attoparsec.ByteString.Lazy  (Parser, many1, string)
-import Data.ByteString.Char8     as C8  (ByteString, concat)
+import Data.ByteString.Builder          (Builder, toLazyByteString, byteString)
+import Data.ByteString                  (ByteString)
+import Data.ByteString.Lazy             (toStrict)
 import Data.Char                        (isSpace)
 
 import Data.Warc.Header.Key             (Key)
 import Data.Warc.Header.Value           (Value)
-import Data.Warc.Header.HeaderLine as HeaderLine
+import Data.Warc.Header.HeaderLine      (HeaderLine, headerLine)
+import qualified Data.Warc.Header.HeaderLine as HL (build, getValue)
 import Data.Warc.Shared
 
 data WarcHeader = WarcHeader WarcVersion [HeaderLine] deriving (Eq, Show)
@@ -16,7 +19,7 @@ data WarcHeader = WarcHeader WarcVersion [HeaderLine] deriving (Eq, Show)
 newtype WarcVersion = WarcVersion ByteString deriving (Eq, Show)
 
 getValue :: Key -> WarcHeader -> Maybe Value
-getValue key (WarcHeader _ headers) = HeaderLine.getValue key headers
+getValue key (WarcHeader _ headers) = HL.getValue key headers
 
 warcHeader :: Parser WarcHeader
 warcHeader = WarcHeader <$> version
@@ -26,8 +29,6 @@ warcHeader = WarcHeader <$> version
 version :: Parser WarcVersion
 version = WarcVersion <$> (string "WARC/" *> takeTill1 isSpace)
 
-toByteString :: WarcHeader -> ByteString
-toByteString (WarcHeader (WarcVersion ver) headerLines) =
-    let first = C8.concat ["WARC/", ver, "\r\n"]
-        rest = C8.concat $ map HeaderLine.toByteString headerLines
-    in C8.concat [first, rest]
+build :: WarcHeader -> Builder
+build (WarcHeader (WarcVersion ver) headerLines) =
+    mconcat $ [byteString "WARC/", byteString ver, byteString "\r\n"] ++ map HL.build headerLines
