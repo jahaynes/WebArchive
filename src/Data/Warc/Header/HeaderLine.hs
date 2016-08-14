@@ -21,15 +21,10 @@ headerLine = do
 valueSeparator :: Parser ()
 valueSeparator = skipSpace >> char ':' >> skipSpace
 
-getContentLength :: [HeaderLine] -> Maybe Int
-getContentLength [] = Nothing
-getContentLength (HeaderLine (MandatoryKey ContentLength) (IntValue i):_) = Just i
-getContentLength (_:hs) = getContentLength hs
-
-getCompressionMode :: [HeaderLine] -> Maybe CompressionMode
-getCompressionMode [] = Nothing
-getCompressionMode (HeaderLine (CustomKey CompressionMode) (CompressionModeValue c):_) = Just c
-getCompressionMode (_:hs) = getCompressionMode hs
+getValue :: Key -> [HeaderLine] -> Maybe Value
+getValue   _ [] = Nothing
+getValue key (HeaderLine k v:xs) | k == key = Just v
+                                 | otherwise = getValue key xs 
 
 toByteString :: HeaderLine -> ByteString
 toByteString (HeaderLine k v) = C8.concat [Key.toByteString k, ": ", Value.toByteString v, "\r\n"]

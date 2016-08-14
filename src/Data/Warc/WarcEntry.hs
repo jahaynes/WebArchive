@@ -9,6 +9,8 @@ import Data.ByteString.Char8    as C8
 import Data.Warc.Body.Body  as Body
 import Data.Warc.Header.Header  as Header
 import Data.Warc.Shared
+import Data.Warc.Header.Key
+import Data.Warc.Header.Value
 
 data WarcEntry = WarcEntry WarcHeader WarcBody deriving (Eq, Show)
 
@@ -19,14 +21,26 @@ warcEntry = do
 
     crlf
 
-    body <- let (Just contentLength) = getContentLength header
-                (Just compressionMode) = getCompressionMode header
-            in warcbody contentLength compressionMode
+    body <- do
+        contentLength <- getContentLength header
+        compressionMode <- getCompressionMode header
+        warcbody contentLength compressionMode
 
     crlf
     crlf
 
     pure $ WarcEntry header body
+
+    where
+    getContentLength :: WarcHeader -> Parser Int
+    getContentLength header = case getValue (MandatoryKey ContentLength) header of
+        Just (IntValue i) -> return i
+        Nothing -> fail "Could not find content-length"
+
+    getCompressionMode :: WarcHeader -> Parser CompressionMode
+    getCompressionMode header = case getValue (CustomKey CompressionMode) header of
+        Just (CompressionModeValue c) -> return c
+        Nothing -> return Uncompressed
 
 toByteString :: WarcEntry -> ByteString
 toByteString (WarcEntry header body) =
