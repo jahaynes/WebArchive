@@ -56,4 +56,3 @@ toLazyByteString = B.toLazyByteString . build
 build :: WarcEntry -> Builder
 build (WarcEntry header body) =
     mconcat [H.build header, byteString "\r\n", B.build body, byteString "\r\n\r\n"]
-        

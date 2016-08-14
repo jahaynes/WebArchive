@@ -29,8 +29,5 @@ getValue   _ [] = Nothing
 getValue key (HeaderLine k v:xs) | k == key = Just v
                                  | otherwise = getValue key xs 
 
-toByteString :: HeaderLine -> ByteString
-toByteString = toStrict . toLazyByteString . build
-
 build :: HeaderLine -> Builder
 build (HeaderLine k v) = mconcat [K.build k, byteString ": ", V.build v, byteString "\r\n"]

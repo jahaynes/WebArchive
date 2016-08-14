@@ -52,9 +52,6 @@ compressMode :: Parser CompressionMode
 compressMode = choice [ Compressed <%> "contentonly"
                       , Uncompressed <%> "none" ]
 
-toByteString :: Value -> ByteString
-toByteString = toStrict . toLazyByteString . build
-
 build :: Value -> Builder
 build (CompressionModeValue Compressed) = byteString "contentonly"
 build (CompressionModeValue Uncompressed) = byteString "none"

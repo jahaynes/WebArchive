@@ -29,9 +29,6 @@ warcHeader = WarcHeader <$> version
 version :: Parser WarcVersion
 version = WarcVersion <$> (string "WARC/" *> takeTill1 isSpace)
 
-toByteString :: WarcHeader -> ByteString
-toByteString = toStrict . toLazyByteString . build
-
 build :: WarcHeader -> Builder
 build (WarcHeader (WarcVersion ver) headerLines) =
     mconcat $ [byteString "WARC/", byteString ver, byteString "\r\n"] ++ map HL.build headerLines

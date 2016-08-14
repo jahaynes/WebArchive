@@ -37,9 +37,6 @@ key = choice [ MandatoryKey <$> choice [ WarcRecordId <%> "WARC-Record-ID"
              , CustomKey <$> choice    [ CompressionMode <%> "Compression-Mode"
                                        , UnknownKey <$> takeTill1 (\x -> isSpace x || x == ':') ]]
 
-toByteString :: Key -> ByteString
-toByteString = toStrict . toLazyByteString . build
-
 build :: Key -> Builder
 build (MandatoryKey k) = buildMandatory k
 build (OptionalKey k)  = buildOptional k
