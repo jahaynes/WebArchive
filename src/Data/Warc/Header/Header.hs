@@ -8,14 +8,10 @@ import Data.ByteString                  (ByteString)
 import Data.ByteString.Lazy             (toStrict)
 import Data.Char                        (isSpace)
 
-<<<<<<< 39d0c59a8ceb5ec1ab1c29162ba4de76362c7baf
 import Data.Warc.Header.Key             (Key)
 import Data.Warc.Header.Value           (Value)
-import Data.Warc.Header.HeaderLine as HeaderLine
-=======
-import Data.Warc.Header.HeaderLine hiding (build)
-import qualified Data.Warc.Header.HeaderLine as HL (build, getContentLength, getCompressionMode)
->>>>>>> added a bunch of bytestring builders
+import Data.Warc.Header.HeaderLine      (HeaderLine, headerLine)
+import qualified Data.Warc.Header.HeaderLine as HL (build, getValue)
 import Data.Warc.Shared
 
 data WarcHeader = WarcHeader WarcVersion [HeaderLine] deriving (Eq, Show)
@@ -23,7 +19,7 @@ data WarcHeader = WarcHeader WarcVersion [HeaderLine] deriving (Eq, Show)
 newtype WarcVersion = WarcVersion ByteString deriving (Eq, Show)
 
 getValue :: Key -> WarcHeader -> Maybe Value
-getValue key (WarcHeader _ headers) = HeaderLine.getValue key headers
+getValue key (WarcHeader _ headers) = HL.getValue key headers
 
 warcHeader :: Parser WarcHeader
 warcHeader = WarcHeader <$> version

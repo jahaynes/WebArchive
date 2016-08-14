@@ -14,8 +14,8 @@ import qualified Data.Warc.Body.Body as B (build)
 import Data.Warc.Header.Header hiding (build)
 import qualified Data.Warc.Header.Header as H
 import Data.Warc.Shared
-import Data.Warc.Header.Key
-import Data.Warc.Header.Value
+import Data.Warc.Header.Key hiding (build)
+import Data.Warc.Header.Value hiding (build)
 
 data WarcEntry = WarcEntry WarcHeader WarcBody deriving (Eq, Show)
 
