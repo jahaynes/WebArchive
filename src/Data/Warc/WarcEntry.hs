@@ -21,9 +21,10 @@ warcEntry = do
 
     crlf
 
-    contentLength <- getContentLength header
-    compressionMode <- getCompressionMode header
-    body <- warcbody contentLength compressionMode
+    body <- do
+        contentLength <- getContentLength header
+        compressionMode <- getCompressionMode header
+        warcbody contentLength compressionMode
 
     crlf
     crlf
