@@ -9,21 +9,21 @@ import Data.ByteString.Lazy                   (toStrict)
 
 import Data.Warc.Shared
 
-data Key = MandatoryKey MandatoryKey 
-         | OptionalKey OptionalKey
-         | CustomKey CustomKey deriving (Eq, Show)
+data Key = MandatoryKey !MandatoryKey 
+         | OptionalKey  !OptionalKey
+         | CustomKey    !CustomKey deriving Eq
 
 data MandatoryKey = WarcRecordId
                   | ContentLength
                   | WarcDate
-                  | WarcType deriving (Eq, Show)
+                  | WarcType deriving Eq
 
 data OptionalKey = ContentType
-                 | WarcTargetURI deriving (Eq, Show)
+                 | WarcTargetURI deriving Eq
 
 data CustomKey = CompressionMode
                | UncompressedContentLength 
-               | UnknownKey ByteString deriving (Eq, Show)
+               | UnknownKey {-# UNPACK #-} !ByteString deriving Eq
 
 key :: Parser Key
 key = choice [ MandatoryKey <$> choice [ WarcRecordId <%> "WARC-Record-ID"
