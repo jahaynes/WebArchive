@@ -7,10 +7,10 @@ import Data.ByteString.Lazy                  (toStrict)
 
 import Data.Warc.Shared
 
-data WarcBody = CompressedBody ByteString
-              | UncompressedBody ByteString deriving (Eq, Show)
+data WarcBody = CompressedBody      {-# UNPACK #-} !ByteString
+              | UncompressedBody    {-# UNPACK #-} !ByteString
 
-data BodyDetails = BodyDetails Int CompressionMode
+data BodyDetails = BodyDetails {-# UNPACK #-} !Int  !CompressionMode
 
 warcbody :: Int -> CompressionMode -> Parser WarcBody
 warcbody sz Compressed = CompressedBody <$> L.take sz

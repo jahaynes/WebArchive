@@ -2,25 +2,25 @@
 
 module Data.Warc.Header.Value where
 
-import Data.Attoparsec.ByteString.Char8      (Parser, choice, takeWhile1, isSpace)
+import Data.Attoparsec.ByteString.Char8      (Parser, choice, takeWhile1, isSpace, char)
 import Data.ByteString.Builder               (Builder, toLazyByteString, byteString, intDec, char8)
 import Data.ByteString.Char8                 (ByteString, readInt)
 import Data.ByteString.Lazy                  (toStrict)
 import Data.Warc.Header.Key   hiding (build)
 import Data.Warc.Shared
 
-data Date = Date
-           { year :: Int
-           , month :: Int 
-           , day :: Int
-           , hour :: Int
-           , min :: Int
-           , sec :: Int } deriving (Eq, Show)
+data Date = Date 
+           { year ::    {-# UNPACK #-}  !Int
+           , month ::   {-# UNPACK #-}  !Int 
+           , day ::     {-# UNPACK #-}  !Int
+           , hour ::    {-# UNPACK #-}  !Int
+           , min ::     {-# UNPACK #-}  !Int
+           , sec ::     {-# UNPACK #-}  !Int } 
 
-data Value = IntValue Int
-           | CompressionModeValue CompressionMode
-           | DateValue Date
-           | StringValue ByteString deriving (Eq, Show)
+data Value = IntValue             {-# UNPACK #-} !Int
+           | CompressionModeValue                !CompressionMode
+           | DateValue            {-# UNPACK #-} !Date
+           | StringValue          {-# UNPACK #-} !ByteString
 
 value :: Key -> Parser Value
 value (MandatoryKey ContentLength) = IntValue <$> intThenSpace
@@ -41,8 +41,9 @@ date = Date <$> intThenSkipChar '-'
             <*> intThenSkipChar 'Z'
     where
     intThenSkipChar :: Char -> Parser Int
-    intThenSkipChar cAfter = int =<< takeTill1 (==cAfter) <* takeWhile1 (==cAfter)
+    intThenSkipChar cAfter = int =<< takeTill1 (==cAfter) <* char cAfter
 
+{-# INLINE int #-}
 int :: ByteString -> Parser Int
 int x = case readInt x of
     Just (i,_) -> pure i

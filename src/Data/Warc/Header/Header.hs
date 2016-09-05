@@ -14,9 +14,9 @@ import Data.Warc.Header.HeaderLine      (HeaderLine, headerLine)
 import qualified Data.Warc.Header.HeaderLine as HL (build, getValue)
 import Data.Warc.Shared
 
-data WarcHeader = WarcHeader WarcVersion [HeaderLine] deriving (Eq, Show)
+data WarcHeader = WarcHeader {-# UNPACK #-} !WarcVersion [HeaderLine]
 
-newtype WarcVersion = WarcVersion ByteString deriving (Eq, Show)
+newtype WarcVersion = WarcVersion ByteString
 
 getValue :: Key -> WarcHeader -> Maybe Value
 getValue key (WarcHeader _ headers) = HL.getValue key headers

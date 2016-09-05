@@ -13,7 +13,7 @@ import Data.Warc.Header.Value     hiding     (build)
 import qualified Data.Warc.Header.Value as V (build)
 import Data.Warc.Shared
 
-data HeaderLine = HeaderLine Key Value deriving (Eq, Show)
+data HeaderLine = HeaderLine Key Value
 
 headerLine :: Parser HeaderLine
 headerLine = do

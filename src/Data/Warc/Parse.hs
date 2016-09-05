@@ -10,4 +10,4 @@ fromByteString bs
     | L.null bs = []
     | otherwise = case parse warcEntry bs of
                       (Done remainder we) -> Right we : fromByteString remainder
-                      x -> [Left (show x)]
+                      x -> [Left "error"]

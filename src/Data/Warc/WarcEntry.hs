@@ -17,7 +17,7 @@ import Data.Warc.Shared
 import Data.Warc.Header.Key hiding (build)
 import Data.Warc.Header.Value hiding (build)
 
-data WarcEntry = WarcEntry WarcHeader WarcBody deriving (Eq, Show)
+data WarcEntry = WarcEntry !WarcHeader !WarcBody
 
 warcEntry :: Parser WarcEntry
 warcEntry = do
