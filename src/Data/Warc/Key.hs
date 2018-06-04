@@ -1,12 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Data.Warc.Header.Key where
+module Data.Warc.Key where
 
 import Data.Attoparsec.ByteString.Char8       (Parser, choice, isSpace)
-import Data.ByteString.Builder                (Builder, toLazyByteString, byteString)
+import Data.ByteString.Builder                (byteString)
 import Data.ByteString                        (ByteString)
-import Data.ByteString.Lazy                   (toStrict)
 
+import Data.Warc.Common                       (ToBuilder (..))
 import Data.Warc.Shared
 
 data Key = MandatoryKey !MandatoryKey 
@@ -37,22 +37,22 @@ key = choice [ MandatoryKey <$> choice [ WarcRecordId <%> "WARC-Record-ID"
              , CustomKey <$> choice    [ CompressionMode <%> "Compression-Mode"
                                        , UnknownKey <$> takeTill1 (\x -> isSpace x || x == ':') ]]
 
-build :: Key -> Builder
-build (MandatoryKey k) = buildMandatory k
-build (OptionalKey k)  = buildOptional k
-build (CustomKey k)    = buildCustom k
+instance ToBuilder Key where
+    toBuilder (MandatoryKey k) = toBuilder k
+    toBuilder (OptionalKey k)  = toBuilder k
+    toBuilder (CustomKey k)    = toBuilder k
 
-buildMandatory :: MandatoryKey -> Builder
-buildMandatory WarcRecordId  = "WARC-Record-ID"
-buildMandatory ContentLength = "Content-Length"
-buildMandatory WarcDate      = "WARC-Date"
-buildMandatory WarcType      = "WARC-Type"
+instance ToBuilder MandatoryKey where
+    toBuilder WarcRecordId  = "WARC-Record-ID"
+    toBuilder ContentLength = "Content-Length"
+    toBuilder WarcDate      = "WARC-Date"
+    toBuilder WarcType      = "WARC-Type"
 
-buildOptional :: OptionalKey -> Builder
-buildOptional ContentType   = byteString "Content-Type"
-buildOptional WarcTargetURI = byteString "WARC-Target-URI"
+instance ToBuilder OptionalKey where
+    toBuilder ContentType   = byteString "Content-Type"
+    toBuilder WarcTargetURI = byteString "WARC-Target-URI"    
 
-buildCustom :: CustomKey -> Builder
-buildCustom           CompressionMode = byteString "Compression-Mode"
-buildCustom UncompressedContentLength = byteString "Uncompressed-Content-Length"
-buildCustom   (UnknownKey unknownKey) = byteString unknownKey
+instance ToBuilder CustomKey where
+    toBuilder           CompressionMode = byteString "Compression-Mode"
+    toBuilder UncompressedContentLength = byteString "Uncompressed-Content-Length"
+    toBuilder   (UnknownKey unknownKey) = byteString unknownKey

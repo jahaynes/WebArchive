@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                WebArchive
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Library for dealing with WebArchive (WARC) files
 -- description:         
 license:             BSD3
@@ -16,17 +16,18 @@ extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Data.Warc.Parse
-                       Data.Warc.Header.Value
-                       Data.Warc.Header.HeaderLine
-                       Data.Warc.Header.Key
-                       Data.Warc.Header.Header
+  exposed-modules:     Data.Warc.Common
+                       Data.Warc.Parse
+                       Data.Warc.Value
+                       Data.Warc.HeaderLine
+                       Data.Warc.Key
+                       Data.Warc.Header
                        Data.Warc.Shared
                        Data.Warc.WarcEntry
-                       Data.Warc.Body.Body
+                       Data.Warc.Body
   -- other-modules:       
   -- other-extensions:
-  ghc-options:	       -O3 -funbox-strict-fields
-  build-depends:       attoparsec, base, bytestring
+  ghc-options:	       -O3 -funbox-strict-fields -Wall
+  build-depends:       attoparsec, base, bytestring, zlib
   hs-source-dirs:      src
   default-language:    Haskell2010
