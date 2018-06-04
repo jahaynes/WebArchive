@@ -54,6 +54,7 @@ compress (WarcEntry headers ub@(UncompressedBody b)) =
         compressedLength = BS.length cb'
         headers' = setValue (MandatoryKey ContentLength) (Just (IntValue compressedLength))
                  . setValue (CustomKey UncompressedContentLength) (Just (IntValue uncompressedLength))
+                 . setValue (CustomKey CompressionMode) (Just Compressed)
                  $ headers
     in WarcEntry headers' cb
 
