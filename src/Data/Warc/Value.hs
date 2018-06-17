@@ -10,6 +10,8 @@ import Data.Warc.Common
 import Data.Warc.Key
 import Data.Warc.Shared
 
+import Data.Monoid ((<>))
+
 data Date = Date 
           { year  :: {-# UNPACK #-} !Int
           , month :: {-# UNPACK #-} !Int 
@@ -33,11 +35,14 @@ instance ToBuilder Value where
     toBuilder (StringValue bs) = byteString bs
     toBuilder (DateValue (Date yr mo da hr mi sc)) =
         mconcat [ intDec yr, char8 '-'
-                , intDec mo, char8 '-'
-                , intDec da, char8 'T'
-                , intDec hr, char8 ':'
-                , intDec mi, char8 ':'
-                , intDec sc, char8 'Z' ]    
+                , twoDigit mo, char8 '-'
+                , twoDigit da, char8 'T'
+                , twoDigit hr, char8 ':'
+                , twoDigit mi, char8 ':'
+                , twoDigit sc, char8 'Z' ]
+        where
+        twoDigit x | x < 10    = char8 '0' <> intDec x
+                   | otherwise = intDec x 
 
 value :: Key -> Parser Value
 value (MandatoryKey ContentLength) = IntValue <$> intThenSpace
