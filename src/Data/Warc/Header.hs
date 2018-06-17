@@ -3,10 +3,9 @@
 module Data.Warc.Header where
 
 import Data.Attoparsec.ByteString.Lazy  (Parser, many1, string)
-import Data.ByteString.Builder          (byteString)
+import Data.ByteString.Builder          (toLazyByteString, byteString)
 import Data.ByteString                  (ByteString)
 import Data.Char                        (isSpace)
-import Data.Maybe                       (mapMaybe)
 
 import           Data.Warc.Common
 import           Data.Warc.Key              (Key)
@@ -23,12 +22,15 @@ getValue :: Key -> WarcHeader -> Maybe Value
 getValue key (WarcHeader _ headers) = HL.getValue key headers
 
 setValue :: Key -> Maybe Value -> WarcHeader -> WarcHeader
-setValue key mVal (WarcHeader ver headers) =
-    WarcHeader ver (mapMaybe change headers)
+setValue key    Nothing (WarcHeader ver headers) = WarcHeader ver (filter (\(HeaderLine k _) -> not (buildEq k key)) headers)
+setValue key (Just val) (WarcHeader ver headers) = WarcHeader ver (go headers)
     where
-    change :: HeaderLine -> Maybe HeaderLine
-    change h@(HeaderLine k _) | k == key  = HeaderLine k <$> mVal
-                              | otherwise = Just h
+    go [] = [HeaderLine key val]
+    go (h@(HeaderLine k v):hs)
+        | key == k  = HeaderLine key val : hs
+        | otherwise = h : go hs 
+
+buildEq a b = (toLazyByteString . toBuilder) a == (toLazyByteString . toBuilder) b  --TODO
 
 warcHeader :: Parser WarcHeader
 warcHeader = WarcHeader <$> version
@@ -42,4 +44,4 @@ instance ToBuilder WarcHeader where
     toBuilder (WarcHeader (WarcVersion ver) headerLines) =
       mconcat $ [ byteString "WARC/"
                 , byteString ver
-                , byteString "\r\n"] ++ map toBuilder headerLines
+                , byteString "\r\n"] ++ map toBuilder headerLines   --TODO

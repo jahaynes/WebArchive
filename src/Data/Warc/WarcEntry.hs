@@ -54,8 +54,20 @@ compress (WarcEntry headers ub@(UncompressedBody b)) =
         compressedLength = BS.length cb'
         headers' = setValue (MandatoryKey ContentLength) (Just (IntValue compressedLength))
                  . setValue (CustomKey UncompressedContentLength) (Just (IntValue uncompressedLength))
+                 . setValue (CustomKey CompressionMode) (Just (CompressionModeValue Compressed))
                  $ headers
     in WarcEntry headers' cb
+
+decompress :: WarcEntry -> WarcEntry
+decompress w@(WarcEntry _ (UncompressedBody _)) = w
+decompress   (WarcEntry headers cb@(CompressedBody _)) =
+    let ub@(UncompressedBody ub') = decompressBody cb
+        uncompressedLength = BS.length ub'
+        headers' = setValue (MandatoryKey ContentLength) (Just (IntValue uncompressedLength))
+                 . setValue (CustomKey UncompressedContentLength) Nothing
+                 . setValue (CustomKey CompressionMode) Nothing
+                 $ headers
+    in WarcEntry headers' ub
 
 toByteString :: WarcEntry -> ByteString
 toByteString = toStrict . B.toLazyByteString . toBuilder
