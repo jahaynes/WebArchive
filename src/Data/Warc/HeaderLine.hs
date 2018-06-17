@@ -1,16 +1,17 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
 
 module Data.Warc.HeaderLine where
 
 import Data.Attoparsec.ByteString.Char8      (Parser, skipSpace, char)
 import Data.ByteString.Builder               (byteString)
+import GHC.Generics                          (Generic)
 
 import Data.Warc.Common                      (ToBuilder(..))
 import Data.Warc.Key                         (Key, key)
 import Data.Warc.Value                       (Value, value)
 import Data.Warc.Shared                      (crlf)
 
-data HeaderLine = HeaderLine Key Value
+data HeaderLine = HeaderLine Key Value deriving Generic
 
 headerLine :: Parser HeaderLine
 headerLine = do

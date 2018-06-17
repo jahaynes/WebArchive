@@ -1,6 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
 
 module Data.Warc.WarcEntry where
+
+import           GHC.Generics                    (Generic)
 
 import           Data.Attoparsec.ByteString.Lazy (Parser)
 import           Data.ByteString                 (ByteString)
@@ -16,7 +18,7 @@ import           Data.Warc.Shared       (crlf)
 import           Data.Warc.Key
 import           Data.Warc.Value
 
-data WarcEntry = WarcEntry !WarcHeader !WarcBody
+data WarcEntry = WarcEntry !WarcHeader !WarcBody deriving Generic
 
 warcEntry :: Parser WarcEntry
 warcEntry = do

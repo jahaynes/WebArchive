@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
 
 module Data.Warc.Header where
 
@@ -6,6 +6,7 @@ import Data.Attoparsec.ByteString.Lazy  (Parser, many1, string)
 import Data.ByteString.Builder          (toLazyByteString, byteString)
 import Data.ByteString                  (ByteString)
 import Data.Char                        (isSpace)
+import GHC.Generics                     (Generic)
 
 import           Data.Warc.Common
 import           Data.Warc.Key              (Key)
@@ -14,9 +15,9 @@ import           Data.Warc.HeaderLine       (HeaderLine (..), headerLine)
 import qualified Data.Warc.HeaderLine as HL (getValue)
 import           Data.Warc.Shared           (takeTill1, crlf)
 
-data WarcHeader = WarcHeader {-# UNPACK #-} !WarcVersion [HeaderLine]
+data WarcHeader = WarcHeader {-# UNPACK #-} !WarcVersion [HeaderLine] deriving Generic
 
-newtype WarcVersion = WarcVersion ByteString
+newtype WarcVersion = WarcVersion ByteString deriving Generic
 
 getValue :: Key -> WarcHeader -> Maybe Value
 getValue key (WarcHeader _ headers) = HL.getValue key headers

@@ -1,10 +1,11 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}
 
 module Data.Warc.Value where
 
 import Data.Attoparsec.ByteString.Char8      (Parser, choice, char)
 import Data.ByteString.Builder               (byteString, intDec, char8)
 import Data.ByteString.Char8                 (ByteString)
+import GHC.Generics                          (Generic)
 
 import Data.Warc.Common
 import Data.Warc.Key
@@ -18,15 +19,15 @@ data Date = Date
           , day   :: {-# UNPACK #-} !Int
           , hour  :: {-# UNPACK #-} !Int
           , min   :: {-# UNPACK #-} !Int
-          , sec   :: {-# UNPACK #-} !Int } 
+          , sec   :: {-# UNPACK #-} !Int } deriving Generic
 
 data CompressionMode = Compressed
-                     | Uncompressed
+                     | Uncompressed deriving Generic
 
 data Value = IntValue             {-# UNPACK #-} !Int
            | CompressionModeValue                !CompressionMode
            | DateValue            {-# UNPACK #-} !Date
-           | StringValue          {-# UNPACK #-} !ByteString
+           | StringValue          {-# UNPACK #-} !ByteString deriving Generic
 
 instance ToBuilder Value where
     toBuilder (CompressionModeValue Compressed) = byteString "contentonly"
