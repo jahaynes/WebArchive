@@ -1,6 +1,6 @@
 module Data.Warc.Body where
 
-import Codec.Compression.GZip                (compress, decompress)
+import Codec.Compression.Zlib                (compress, decompress)
 import Data.Attoparsec.ByteString.Lazy as L  (Parser, take)
 import Data.ByteString                       (ByteString)
 import Data.ByteString.Builder               (byteString)
