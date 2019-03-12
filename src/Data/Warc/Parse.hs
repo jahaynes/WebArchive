@@ -11,3 +11,10 @@ fromByteString bs
     | otherwise = case parse warcEntry bs of
                       (Done remainder we) -> Right we : fromByteString remainder
                       _ -> [Left "error"]
+
+fromByteStringRemainder :: L.ByteString -> Either String (WarcEntry, L.ByteString)
+fromByteStringRemainder bs
+    | L.null bs = Left "no data"
+    | otherwise = case parse warcEntry bs of
+                      (Done remainder we) -> Right (we, remainder)
+                      _                   -> Left "error"
