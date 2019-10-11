@@ -1,16 +1,23 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module Data.Warc.Body where
 
 import Codec.Compression.Zlib                (compress, decompress)
+import Control.DeepSeq
 import Data.Attoparsec.ByteString.Lazy as L  (Parser, take)
 import Data.ByteString                       (ByteString)
 import Data.ByteString.Builder               (byteString)
 import Data.ByteString.Lazy                  (fromStrict, toStrict)
+import GHC.Generics                          (Generic)
 
 import Data.Warc.Common                      (ToBuilder (..))
 import Data.Warc.Value                       (CompressionMode (..))
 
 data WarcBody = CompressedBody      {-# UNPACK #-} !ByteString
               | UncompressedBody    {-# UNPACK #-} !ByteString
+                  deriving Generic
+
+instance NFData WarcBody
 
 data BodyDetails = BodyDetails {-# UNPACK #-} !Int  !CompressionMode
 

@@ -1,13 +1,16 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings
+           , DeriveGeneric     #-}
 
 module Data.Warc.WarcEntry where
 
+import           Control.DeepSeq
 import           Data.Attoparsec.ByteString.Lazy (Parser)
 import           Data.ByteString                 (ByteString)
 import qualified Data.ByteString         as BS   (length)
 import qualified Data.ByteString.Builder as B    (toLazyByteString, byteString)
 import           Data.ByteString.Lazy            (toStrict)
 import qualified Data.ByteString.Lazy    as Lazy (ByteString)
+import           GHC.Generics                    (Generic)
 
 import           Data.Warc.Common       (ToBuilder (..))
 import           Data.Warc.Body 
@@ -17,6 +20,8 @@ import           Data.Warc.Key
 import           Data.Warc.Value
 
 data WarcEntry = WarcEntry !WarcHeader !WarcBody
+                   deriving Generic
+instance NFData WarcEntry
 
 warcEntry :: Parser WarcEntry
 warcEntry = do

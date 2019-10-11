@@ -1,9 +1,12 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings
+           , DeriveGeneric     #-}
 
 module Data.Warc.HeaderLine where
 
+import Control.DeepSeq
 import Data.Attoparsec.ByteString.Char8      (Parser, skipSpace, char)
 import Data.ByteString.Builder               (byteString)
+import GHC.Generics                          (Generic)
 
 import Data.Warc.Common                      (ToBuilder(..))
 import Data.Warc.Key                         (Key, key)
@@ -11,6 +14,8 @@ import Data.Warc.Value                       (Value, value)
 import Data.Warc.Shared                      (crlf)
 
 data HeaderLine = HeaderLine Key Value
+                    deriving Generic
+instance NFData HeaderLine
 
 headerLine :: Parser HeaderLine
 headerLine = do

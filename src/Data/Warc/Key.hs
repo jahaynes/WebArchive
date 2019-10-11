@@ -1,29 +1,36 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings
+           , DeriveGeneric     #-}
 
 module Data.Warc.Key where
 
-import Data.Attoparsec.ByteString.Char8       (Parser, choice, isSpace)
-import Data.ByteString.Builder                (byteString)
-import Data.ByteString                        (ByteString)
+import Control.DeepSeq
+import Data.Attoparsec.ByteString.Char8 (Parser, choice, isSpace)
+import Data.ByteString.Builder          (byteString)
+import Data.ByteString                  (ByteString)
+import GHC.Generics                     (Generic)
 
-import Data.Warc.Common                       (ToBuilder (..))
+import Data.Warc.Common                 (ToBuilder (..))
 import Data.Warc.Shared
 
 data Key = MandatoryKey !MandatoryKey 
          | OptionalKey  !OptionalKey
-         | CustomKey    !CustomKey deriving Eq
+         | CustomKey    !CustomKey deriving (Eq, Generic)
+instance NFData Key
 
 data MandatoryKey = WarcRecordId
                   | ContentLength
                   | WarcDate
-                  | WarcType deriving Eq
+                  | WarcType deriving (Eq, Generic)
+instance NFData MandatoryKey
 
 data OptionalKey = ContentType
-                 | WarcTargetURI deriving Eq
+                 | WarcTargetURI deriving (Eq, Generic)
+instance NFData OptionalKey
 
 data CustomKey = CompressionMode
                | UncompressedContentLength 
-               | UnknownKey {-# UNPACK #-} !ByteString deriving Eq
+               | UnknownKey {-# UNPACK #-} !ByteString deriving (Eq, Generic)
+instance NFData CustomKey
 
 key :: Parser Key
 key = choice [ MandatoryKey <$> choice [ WarcRecordId <%> "WARC-Record-ID"
