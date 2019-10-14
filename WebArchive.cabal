@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                WebArchive
-version:             0.2.2.0
+version:             0.3.2.0
 synopsis:            Library for dealing with WebArchive (WARC) files
 -- description:         
 license:             BSD3
